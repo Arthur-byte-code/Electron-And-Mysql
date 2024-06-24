@@ -1,0 +1,32 @@
+{
+  "name": "electronandmysql",
+  "version": "1.0.0",
+  "description": "It is a personal project that consists of a graphical interface in Electron that asks the user to register, if necessary, and then the registered credentials to log in.",
+  "main": "main.js",
+  "scripts": {
+    "test": "test",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arthur-byte-code/Electron-And-Mysql.git"
+  },
+  "keywords": [
+    "authentifation",
+    "mysql",
+    "electron"
+  ],
+  "author": "Arthur-byte-code",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Arthur-byte-code/Electron-And-Mysql/issues"
+  },
+  "homepage": "https://github.com/Arthur-byte-code/Electron-And-Mysql#readme",
+  "devDependencies": {
+    "@types/node": "^20.14.8",
+    "electron": "^31.0.2"
+  },
+  "dependencies": {
+    "mysql": "^2.18.1"
+  }
+}
