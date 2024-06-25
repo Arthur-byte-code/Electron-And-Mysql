@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    
-   
-    
+<head>
     <meta charset="UTF-8">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title>ElectronAPP</title>
-  </head>
-  <body>
-    <h1>Register section</h1>
-   
-<input type="button" value="Connect to mysql" id="btn"/>
-<script src="ipcrenderer.js"></script>
-  </body>
-
+</head>
+<body>
+    <h1>Register Section</h1>
+    <form id="register-form">
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="EMAIL"><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="PASSWORD"><br>
+    </form>
+    <input type="button" value="Connect to MySQL" id="btn"/>
+    <script src="ipcrenderer.js"></script>
+</body>
 </html>

@@ -1,5 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-const mysql = require("mysql");
+const mysql = require('mysql');
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -23,36 +23,39 @@ app.whenReady().then(() => {
     });
 });
 
-ipcMain.on('DoConnection', () => {
+ipcMain.on('DoConnection', (event, data) => {
     const connection = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "", // Coloque a senha correta aqui, se necessário
-        database: "users"
+        host: 'localhost',
+        user: 'root',
+        password: '', // Enter the correct password if needed
+        database: 'users'
     });
 
     connection.connect((err) => {
         if (err) {
-            return console.log("Erro de conexão: " + err.stack);
+            console.error('Connection error: ' + err.stack);
+            event.reply('connectionResult', 'Connection failed');
+            return;
         }
-        console.log("Conexão estabelecida com sucesso");
+        console.log('Successfully connected to the database');
 
-        // Query para selecionar o email_user onde o id_users é 1
-        const query = 'SELECT email_users FROM users_info WHERE id_users = 1';
+        const query = 'INSERT INTO users_info (email_users, password_user) VALUES (?, ?)';
+        const values = [data.EmailInput, data.PasswordInput];
 
-        connection.query(query, (err, results, fields) => {
+        console.log('Entered email:', data.EmailInput);
+        console.log('Entered password:', data.PasswordInput);
+
+        connection.query(query, values, (err, results) => {
             if (err) {
-                console.log("Erro na query: " + err.stack);
+                console.error('Query error: ' + err.stack);
+                event.reply('connectionResult', 'Data insertion failed');
             } else {
-                if (results.length > 0) {
-                    console.log("Email do usuário:", results[0].email_users);
-                } else {
-                    console.log("Nenhum usuário encontrado com id_users = 1");
-                }
+                console.log('Data successfully inserted, new record ID:', results.insertId);
+                event.reply('connectionResult', 'Data successfully inserted');
             }
 
             connection.end(() => {
-                console.log("Conexão encerrada");
+                console.log('Connection closed');
             });
         });
     });
