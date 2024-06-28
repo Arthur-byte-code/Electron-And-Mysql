@@ -23,35 +23,37 @@ app.whenReady().then(() => {
     });
 });
 
-ipcMain.on('DoConnection', (event, data) => {
+ipcMain.on('DoLogin', (event, data) => {
     const connection = mysql.createConnection({
         host: 'localhost',
         user: 'root',
-        password: '', // Enter the correct password if needed
+        password: '', // Insira a senha correta, se necessário
         database: 'users'
     });
 
     connection.connect((err) => {
         if (err) {
             console.error('Connection error: ' + err.stack);
-            event.reply('connectionResult', 'Connection failed');
+            event.reply('loginResult', 'Connection failed');
             return;
         }
         console.log('Successfully connected to the database');
 
-        const query = 'INSERT INTO users_info (email_users, password_user) VALUES (?, ?)';
+        const query = 'SELECT * FROM users_info WHERE email_users = ? AND password_user = ?';
         const values = [data.EmailInput, data.PasswordInput];
-
-        console.log('Entered email:', data.EmailInput);
-        console.log('Entered password:', data.PasswordInput);
 
         connection.query(query, values, (err, results) => {
             if (err) {
                 console.error('Query error: ' + err.stack);
-                event.reply('connectionResult', 'Data insertion failed');
+                event.reply('loginResult', 'Login failed');
             } else {
-                console.log('Data successfully inserted, new record ID:', results.insertId);
-                event.reply('connectionResult', 'Data successfully inserted');
+                if (results.length > 0) {
+                    console.log('Login successful');
+                    event.reply('loginResult', 'Login successful', 'welcome.html');
+                } else {
+                    console.log('Invalid email or password');
+                    event.reply('loginResult', 'Invalid email or password');
+                }
             }
 
             connection.end(() => {

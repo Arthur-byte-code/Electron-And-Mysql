@@ -1,12 +1,15 @@
 const { ipcRenderer } = require('electron');
 
-document.getElementById('btn').addEventListener('click', () => {
+document.getElementById('login-btn').addEventListener('click', () => {
     const EmailInput = document.getElementById('email').value;
     const PasswordInput = document.getElementById('password').value;
 
-    ipcRenderer.send('DoConnection', { EmailInput, PasswordInput });
+    ipcRenderer.send('DoLogin', { EmailInput, PasswordInput });
 });
 
-ipcRenderer.on('connectionResult', (event, message) => {
+ipcRenderer.on('loginResult', (event, message, mainPage) => {
     alert(message);
+    if (mainPage) {
+        window.location.href = mainPage;
+    }
 });
