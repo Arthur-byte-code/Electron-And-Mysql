@@ -27,7 +27,7 @@ ipcMain.on('DoLogin', (event, data) => {
     const connection = mysql.createConnection({
         host: 'localhost',
         user: 'root',
-        password: '', // Insert the correct password if necessary
+        password: '', // Insira a senha correta se necessário
         database: 'users'
     });
 
@@ -66,7 +66,7 @@ ipcMain.on('DoRegister', (event, data) => {
     const connection = mysql.createConnection({
         host: 'localhost',
         user: 'root',
-        password: '', // Insert the correct password if necessary
+        password: '', // Insira a senha correta se necessário
         database: 'users'
     });
 
@@ -77,21 +77,43 @@ ipcMain.on('DoRegister', (event, data) => {
             return;
         }
 
-        const query = 'INSERT INTO users_info (email_users, password_user) VALUES (?, ?)';
-        const values = [data.EmailInput, data.PasswordInput];
-
-        connection.query(query, values, (err, results) => {
+        // Verificar se o email já está registrado
+        const checkQuery = 'SELECT * FROM users_info WHERE email_users = ?';
+        connection.query(checkQuery, [data.EmailInput], (err, results) => {
             if (err) {
                 console.error('Query error: ' + err.stack);
                 event.reply('registerResult', 'Registration failed');
-            } else {
-                console.log('Registration successful');
-                event.reply('registerResult', 'Registration successful');
+                connection.end(() => {
+                    console.log('Connection closed');
+                });
+                return;
             }
 
-            connection.end(() => {
-                console.log('Connection closed');
-            });
+            if (results.length > 0) {
+                console.log('Email already registered');
+                event.reply('registerResult', 'Email already registered');
+                connection.end(() => {
+                    console.log('Connection closed');
+                });
+            } else {
+                // Se o email não estiver registrado, insere o novo registro
+                const insertQuery = 'INSERT INTO users_info (email_users, password_user) VALUES (?, ?)';
+                const values = [data.EmailInput, data.PasswordInput];
+
+                connection.query(insertQuery, values, (err, results) => {
+                    if (err) {
+                        console.error('Query error: ' + err.stack);
+                        event.reply('registerResult', 'Registration failed');
+                    } else {
+                        console.log('Registration successful');
+                        event.reply('registerResult', 'Registration successful');
+                    }
+
+                    connection.end(() => {
+                        console.log('Connection closed');
+                    });
+                });
+            }
         });
     });
 });
